@@ -7,13 +7,6 @@ module Fastlane
 
   module Helper
     class RustoreHelper
-      # class methods that you define here become available in your action
-      # as `Helper::RustoreHelper.your_method`
-      #
-      def self.show_message
-        UI.message("Hello from the rustore plugin helper!")
-      end
-
       def self.connection
         require 'faraday'
         require 'faraday_middleware'
@@ -50,7 +43,7 @@ module Fastlane
           req.body = { companyId: company_id, timestamp: timestamp, signature: signature }
         end
 
-        UI.message("Debug: response #{response.body}")
+        UI.message("Debug: response #{response.body}") if ENV['DEBUG']
 
         response.body["body"]["jwe"]
       end
@@ -62,7 +55,7 @@ module Fastlane
           req.body = { appName: version_name }
         end
 
-        UI.message("Debug: response #{response.body}")
+        UI.message("Debug: response #{response.body}") if ENV['DEBUG']
 
         response.body["body"]
       end
@@ -73,7 +66,7 @@ module Fastlane
           req.headers['Public-Token'] = token
         end
 
-        UI.message("Debug: response #{response.body}")
+        UI.message("Debug: response #{response.body}") if ENV['DEBUG']
       end
 
       def self.upload_apk(token, draft_id, is_hms, file_path, package_name)
@@ -94,7 +87,7 @@ module Fastlane
           req.body = payload
         end
 
-        UI.message("Debug: response #{response.body}")
+        UI.message("Debug: response #{response.body}") if ENV['DEBUG']
       end
 
       def self.commit_version(token, draft_id, package_name)
@@ -103,9 +96,8 @@ module Fastlane
           req.headers['Public-Token'] = token
         end
 
-        UI.message("Debug: response #{response.body}")
+        UI.message("Debug: response #{response.body}") if ENV['DEBUG']
       end
-
     end
   end
 end
