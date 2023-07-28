@@ -3,7 +3,7 @@ require "fastlane_core/ui/ui"
 
 module Fastlane
   module Actions
-    class RustoreAction < Action
+    class RustorePublishAction < Action
       def self.authors
         ["Vladislav Onishchenko"]
       end
