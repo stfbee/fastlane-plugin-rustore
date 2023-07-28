@@ -1,37 +1,69 @@
 require 'fastlane/action'
-require_relative '../helper/rustore_helper'
+require "fastlane_core/ui/ui"
 
 module Fastlane
   module Actions
     class RustoreAction < Action
-      def self.run(params)
-        UI.message("The rustore plugin is working!")
+      def self.authors
+        ["Vladislav Onishchenko"]
       end
 
       def self.description
         "Rustore fastlane integration plugin"
       end
 
-      def self.authors
-        ["Vladislav Onishchenko"]
-      end
+      def self.run(params)
+        version_name = params[:version_name]
+        package_name = params[:package_name]
+        company_id = params[:company_id]
+        private_key = params[:private_key]
+        gms_apk = params[:gms_apk]
+        hms_apk = params[:hms_apk]
 
-      def self.return_value
-        # If your method provides a return value, you can describe here what it does
-      end
+        # Получение токена
+        token = Helper::RustoreHelper.get_token(company_id: company_id, private_key: private_key)
+        # Удаление черновика
+        # Helper::RustoreHelper.delete_draft(token, draft_id, package_name)
+        # Создание черновика
+        draft_id = Helper::RustoreHelper.create_draft(token, package_name, version_name)
+        # Загрузка апк
+        Helper::RustoreHelper.upload_apk(token, draft_id, false, gms_apk, package_name)
+        # Если путь до хмс передали, то и его заливаем
+        unless hms_apk.nil?
+          Helper::RustoreHelper.upload_apk(token, draft_id, true, hms_apk, package_name)
+        end
+        # Отправка на модерацию
+        Helper::RustoreHelper.commit_version(token, draft_id, package_name)
 
-      def self.details
-        # Optional:
-        ""
       end
 
       def self.available_options
         [
-          # FastlaneCore::ConfigItem.new(key: :your_option,
-          #                         env_name: "RUSTORE_YOUR_OPTION",
-          #                      description: "A description of your option",
-          #                         optional: false,
-          #                             type: String)
+          FastlaneCore::ConfigItem.new(key: :version_name,
+                                       env_name: "RUSTORE_VERSION_NAME",
+                                       description: "имя версии приложения, например `1.0.0 (102)`",
+                                       optional: false,
+                                       type: String),
+          FastlaneCore::ConfigItem.new(key: :package_name,
+                                       env_name: "RUSTORE_PACKAGE_NAME",
+                                       description: "пакет приложения, например `com.example.example`",
+                                       optional: false),
+          FastlaneCore::ConfigItem.new(key: :company_id,
+                                       env_name: "RUSTORE_COMPANY_ID",
+                                       description: "айдишник компании в русторе",
+                                       optional: false),
+          FastlaneCore::ConfigItem.new(key: :private_key,
+                                       env_name: "RUSTORE_PRIVATE_KEY",
+                                       description: "приватный ключ в русторе",
+                                       optional: false),
+          FastlaneCore::ConfigItem.new(key: :gms_apk,
+                                       env_name: "RUSTORE_GMS_APK",
+                                       description: "путь до апк с гуглсервисами",
+                                       optional: false),
+          FastlaneCore::ConfigItem.new(key: :hms_apk,
+                                       env_name: "RUSTORE_HMS_APK",
+                                       description: "путь до апк с хуавейсервисами (опционально)",
+                                       optional: true)
         ]
       end
 
