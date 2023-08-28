@@ -1,55 +1,37 @@
-# fastlane-plugin-rustore
-Fastlane плагин для заливки приложений в Rustore
+# Fastlane Rustore plugin
 
-# Rustore plugin
+[![fastlane Plugin Badge](https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg)](https://rubygems.org/gems/fastlane-plugin-rustore) [![stability-wip](https://img.shields.io/badge/stability-wip-lightgrey.svg)](https://github.com/mkenney/software-guides/blob/master/STABILITY-BADGES.md#work-in-progress)
 
-[![fastlane Plugin Badge](https://rawcdn.githack.com/fastlane/fastlane/master/fastlane/assets/plugin-badge.svg)](https://rubygems.org/gems/fastlane-plugin-rustore)
 
-## Getting Started
+## Дисклеймер
 
-This project is a [_fastlane_](https://github.com/fastlane/fastlane) plugin. To get started with `fastlane-plugin-rustore`, add it to your project by running:
+Пока что реализован базовый функционал с заливкой апк. Скриншоты, описание и прочие материалы наследуются от предыдущего релиза. Обработки ошибок нет. Если у вас уже есть черновик релиза, то скорей всего ничего не заработает. Черновик, созданный через апи, в админке отображаться не будет. Если случилась ошибка где-то на этапе заливки, то останется черновик, который будет мешать следующему запуску скрипта, удалить его лучше с помощью [питонскрипта](https://github.com/stfbee/python-rustore-api), а экшен удаления тут будет чуть позже.
 
+## Поехали
+
+Для начала добавь плагин в ваш fastlane проект:
 ```bash
 fastlane add_plugin rustore
 ```
-
-## About rustore
-
-Rustore fastlane integration
-
-**Note to author:** Add a more detailed description about this plugin here. If your plugin contains multiple actions, make sure to mention them here.
-
-## Example
-
-Check out the [example `Fastfile`](fastlane/Fastfile) to see how to use this plugin. Try it by cloning the repo, running `fastlane install_plugins` and `bundle exec fastlane test`.
-
-**Note to author:** Please set up a sample project to make it easy for users to explore what your plugin does. Provide everything that is necessary to try out the plugin in this project (including a sample Xcode/Android project if necessary)
-
-## Run tests for this plugin
-
-To run both the tests, and code style validation, run
-
+После чего в каком-нибудь лейне дергай экшен плагина:
 ```
-rake
+    rustore_publish(
+        gms_apk: "../../app-release.apk",
+        hms_apk: "../../app-release-hms.apk",
+        package_name: "com.example.example",
+        version_name: "1.0.0 (102)",
+        company_id: "123123",
+        private_key: "MIIE....."
+    )
 ```
 
-To automatically fix many of the styling issues, use
-```
-rubocop -a
-```
+* `gms_apk` - путь до .apk, который лучше скачать с гугл плея, у фастлейна даже есть для этого [инструмент](https://docs.fastlane.tools/actions/download_from_play_store/)
+* `hms_apk` - путь до .apk с Huawei-сервисами (опционально). У Рустора пока все плохо с документацией об этом, но залить его можно, что получится - пока хз. 
+* `package_name` и `version_name` - знаешь где брать
+* `company_id` и `private_key` надо взять в админке рустора, доступ к ним имеет только оунер.
 
-## Issues and Feedback
-
-For any other issues and feedback about this plugin, please submit it to this repository.
-
-## Troubleshooting
-
-If you have trouble using plugins, check out the [Plugins Troubleshooting](https://docs.fastlane.tools/plugins/plugins-troubleshooting/) guide.
-
-## Using _fastlane_ Plugins
-
-For more information about how the `fastlane` plugin system works, check out the [Plugins documentation](https://docs.fastlane.tools/plugins/create-plugin/).
-
-## About _fastlane_
-
-_fastlane_ is the easiest way to automate beta deployments and releases for your iOS and Android apps. To learn more, check out [fastlane.tools](https://fastlane.tools).
+## Ссылочки
+* [_fastlane_](https://github.com/fastlane/fastlane)
+* [Plugins Troubleshooting](https://docs.fastlane.tools/plugins/plugins-troubleshooting/)
+* [Plugins documentation](https://docs.fastlane.tools/plugins/create-plugin/)
+* [Rustore API](https://help.rustore.ru/rustore/for_developers/work_with_RuStore_API)
