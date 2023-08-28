@@ -13,7 +13,6 @@ module Fastlane
       end
 
       def self.run(params)
-        version_name = params[:version_name]
         package_name = params[:package_name]
         company_id = params[:company_id]
         private_key = params[:private_key]
@@ -25,7 +24,7 @@ module Fastlane
         # Удаление черновика
         # Helper::RustoreHelper.delete_draft(token, draft_id, package_name)
         # Создание черновика
-        draft_id = Helper::RustoreHelper.create_draft(token, package_name, version_name)
+        draft_id = Helper::RustoreHelper.create_draft(token, package_name)
         # Загрузка апк
         Helper::RustoreHelper.upload_apk(token, draft_id, false, gms_apk, package_name)
         # Если путь до хмс передали, то и его заливаем
@@ -39,11 +38,6 @@ module Fastlane
 
       def self.available_options
         [
-          FastlaneCore::ConfigItem.new(key: :version_name,
-                                       env_name: "RUSTORE_VERSION_NAME",
-                                       description: "имя версии приложения, например `1.0.0 (102)`",
-                                       optional: false,
-                                       type: String),
           FastlaneCore::ConfigItem.new(key: :package_name,
                                        env_name: "RUSTORE_PACKAGE_NAME",
                                        description: "пакет приложения, например `com.example.example`",
