@@ -52,6 +52,7 @@ module Fastlane
         url = "/public/v1/application/#{package_name}/version"
         response = connection.post(url) do |req|
           req.headers['Public-Token'] = token
+          req.body = {}
         end
 
         UI.message("Debug: response #{response.body}") if ENV['DEBUG']
@@ -78,12 +79,13 @@ module Fastlane
         end
 
         url = "/public/v1/application/#{package_name}/version/#{draft_id}/apk"
-        payload = { servicesType: apk_type, isMainApk: is_main }
         payload[:file] = Faraday::Multipart::FilePart.new(file_path, 'application/vnd.android.package-archive')
 
         response = connection.post(url) do |req|
           req.headers['Public-Token'] = token
-          req.body = payload
+          req.params['servicesType'] = apk_type
+          req.params['isMainApk'] = is_main
+          req.body = {}
         end
 
         UI.message("Debug: response #{response.body}") if ENV['DEBUG']
