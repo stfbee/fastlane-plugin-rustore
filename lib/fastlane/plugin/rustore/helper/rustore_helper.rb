@@ -56,17 +56,16 @@ module Fastlane
         end
 
         UI.message("Debug: response #{response.body}") if ENV['DEBUG']
-
-        response.body["body"]
-      end
-
-      def self.delete_draft(token, draft_id, package_name)
-        url = "/public/v1/application/#{package_name}/version/#{draft_id}"
-        response = connection.delete(url) do |req|
-          req.headers['Public-Token'] = token
+        if response.body["body"]
+          # Если черновика не было, и мы создали новый, здесь будет draftId
+          return response.body["body"]
+        elsif response.body["message"]
+          # Если черновик уже существовал, в message будет ошибка вида
+          # "You already have draft version with ID = XXXXXXXXXX", откуда достаем ID существующего черновика.
+          return response.body["message"].scan(/\d+/).first.to_i
+        else
+          raise "Couldn't get draftId from RuStore"
         end
-
-        UI.message("Debug: response #{response.body}") if ENV['DEBUG']
       end
 
       def self.upload_apk(token, draft_id, is_hms, file_path, package_name)

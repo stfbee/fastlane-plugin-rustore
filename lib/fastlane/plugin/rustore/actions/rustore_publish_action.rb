@@ -21,8 +21,6 @@ module Fastlane
 
         # Получение токена
         token = Helper::RustoreHelper.get_token(company_id: company_id, private_key: private_key)
-        # Удаление черновика
-        # Helper::RustoreHelper.delete_draft(token, draft_id, package_name)
         # Создание черновика
         draft_id = Helper::RustoreHelper.create_draft(token, package_name)
         # Загрузка апк
