@@ -13,6 +13,7 @@ test-results
 .idea/**/usage.statistics.xml
 .idea/**/dictionaries
 .idea/**/shelf
+fastlane-plugin-rustore.iml
 
 # AWS User-specific
 .idea/**/aws.xml
