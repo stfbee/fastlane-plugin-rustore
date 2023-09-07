@@ -16,13 +16,14 @@ module Fastlane
         package_name = params[:package_name]
         company_id = params[:company_id]
         private_key = params[:private_key]
+        publish_type = params[:publish_type]
         gms_apk = params[:gms_apk]
         hms_apk = params[:hms_apk]
 
         # Получение токена
         token = Helper::RustoreHelper.get_token(company_id: company_id, private_key: private_key)
         # Создание черновика
-        draft_id = Helper::RustoreHelper.create_draft(token, package_name)
+        draft_id = Helper::RustoreHelper.create_draft(token, package_name, publish_type)
         # Загрузка апк
         Helper::RustoreHelper.upload_apk(token, draft_id, false, gms_apk, package_name)
         # Если путь до хмс передали, то и его заливаем
@@ -48,6 +49,10 @@ module Fastlane
                                        env_name: "RUSTORE_PRIVATE_KEY",
                                        description: "приватный ключ в русторе",
                                        optional: false),
+          FastlaneCore::ConfigItem.new(key: :publish_type,
+                                       env_name: "RUSTORE_PUBLISH_TYPE",
+                                       description: "Тип публикации (MANUAL, DELAYED, INSTANTLY). По умолчанию - INSTANTLY",
+                                       optional: true),
           FastlaneCore::ConfigItem.new(key: :gms_apk,
                                        env_name: "RUSTORE_GMS_APK",
                                        description: "путь до апк с гуглсервисами",

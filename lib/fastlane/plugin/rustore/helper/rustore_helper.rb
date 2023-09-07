@@ -48,11 +48,12 @@ module Fastlane
         response.body["body"]["jwe"]
       end
 
-      def self.create_draft(token, package_name)
+      def self.create_draft(token, package_name, publish_type)
         url = "/public/v1/application/#{package_name}/version"
         response = connection.post(url) do |req|
           req.headers['Public-Token'] = token
           req.body = {}
+          req.body['publishType'] = publish_type unless publish_type.nil?
         end
 
         UI.message("Debug: response #{response.body}") if ENV['DEBUG']
@@ -86,6 +87,10 @@ module Fastlane
           req.params['servicesType'] = apk_type
           req.params['isMainApk'] = is_main
           req.body = payload
+        end
+
+        if response.body["message"] == "File was not uploaded successfully: The code of this version must be larger than that of the previous one"
+          raise "Build with this version code was already uploaded earlier"
         end
 
         UI.message("Debug: response #{response.body}") if ENV['DEBUG']
