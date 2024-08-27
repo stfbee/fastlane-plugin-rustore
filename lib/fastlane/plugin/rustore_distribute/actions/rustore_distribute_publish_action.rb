@@ -3,35 +3,35 @@ require "fastlane_core/ui/ui"
 
 module Fastlane
   module Actions
-    class RustorePublishAction < Action
+    class RustoreDistributePublishAction < Action
       def self.authors
         ["Vladislav Onishchenko"]
       end
 
       def self.description
-        "Rustore fastlane integration plugin"
+        "RustoreDistribute fastlane integration plugin"
       end
 
       def self.run(params)
         package_name = params[:package_name]
-        company_id = params[:company_id]
+        key_id = params[:key_id]
         private_key = params[:private_key]
         publish_type = params[:publish_type]
         gms_apk = params[:gms_apk]
         hms_apk = params[:hms_apk]
 
         # Получение токена
-        token = Helper::RustoreHelper.get_token(company_id: company_id, private_key: private_key)
+        token = Helper::RustoreDistributeHelper.get_token(key_id: key_id, private_key: private_key)
         # Создание черновика
-        draft_id = Helper::RustoreHelper.create_draft(token, package_name, publish_type)
+        draft_id = Helper::RustoreDistributeHelper.create_draft(token, package_name, publish_type)
         # Загрузка апк
-        Helper::RustoreHelper.upload_apk(token, draft_id, false, gms_apk, package_name)
+        Helper::RustoreDistributeHelper.upload_apk(token, draft_id, false, gms_apk, package_name)
         # Если путь до хмс передали, то и его заливаем
         unless hms_apk.nil?
-          Helper::RustoreHelper.upload_apk(token, draft_id, true, hms_apk, package_name)
+          Helper::RustoreDistributeHelper.upload_apk(token, draft_id, true, hms_apk, package_name)
         end
         # Отправка на модерацию
-        Helper::RustoreHelper.commit_version(token, draft_id, package_name)
+        Helper::RustoreDistributeHelper.commit_version(token, draft_id, package_name)
 
       end
 
@@ -41,8 +41,8 @@ module Fastlane
                                        env_name: "RUSTORE_PACKAGE_NAME",
                                        description: "пакет приложения, например `com.example.example`",
                                        optional: false),
-          FastlaneCore::ConfigItem.new(key: :company_id,
-                                       env_name: "RUSTORE_COMPANY_ID",
+          FastlaneCore::ConfigItem.new(key: :key_id,
+                                       env_name: "RUSTORE_KEY_ID",
                                        description: "айдишник компании в русторе",
                                        optional: false),
           FastlaneCore::ConfigItem.new(key: :private_key,

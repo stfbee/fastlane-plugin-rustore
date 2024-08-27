@@ -1,15 +1,15 @@
 lib = File.expand_path("lib", __dir__)
 $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
-require 'fastlane/plugin/rustore/version'
+require 'fastlane/plugin/rustore_distribute/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = 'fastlane-plugin-rustore'
-  spec.version       = Fastlane::Rustore::VERSION
-  spec.author        = 'Vladislav Onishchenko'
-  spec.email         = 'pinkey.950@gmail.com'
+  spec.name          = 'fastlane-plugin-rustore_distribute'
+  spec.version       = Fastlane::RustoreDistribute::VERSION
+  spec.author        = 'Vladimir Evstratov'
+  spec.email         = 'vladimir.evstratov@list.ru'
 
   spec.summary       = 'Rustore fastlane integration plugin'
-  spec.homepage      = "https://github.com/stfbee/fastlane-plugin-rustore"
+  spec.homepage      = "https://github.com/vladimirevstratov/fastlane-plugin-rustore"
   spec.license       = "MIT"
 
   spec.files         = Dir["lib/**/*"] + %w(README.md LICENSE)
