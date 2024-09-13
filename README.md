@@ -22,7 +22,7 @@ fastlane add_plugin rustore
         hms_apk: "../../app-release-hms.apk",
         package_name: "com.example.example",
         publish_type: "MANUAL"
-        company_id: "123123",
+        key_id: "123123",
         private_key: "MIIE....."
     )
 ```
@@ -31,7 +31,7 @@ fastlane add_plugin rustore
 * `hms_apk` - путь до .apk с Huawei-сервисами (опционально). У Рустора пока все плохо с документацией об этом, но залить его можно, что получится - пока хз. 
 * `package_name` - название пакета
 * `publish_type` - тип публикации (MANUAL - ручная, DELAYED - отложенная, INSTANTLY - автоматическая после модерации). По умолчанию - INSTANTLY. 
-* `company_id` и `private_key` надо взять в админке рустора, доступ к ним имеет только оунер.
+* `key_id` и `private_key` надо взять в админке рустора, доступ к ним имеет только оунер.
 
 ## Ссылочки
 * [_fastlane_](https://github.com/fastlane/fastlane)

@@ -29,18 +29,18 @@ module Fastlane
         end
       end
 
-      def self.rsa_sign(timestamp, company_id, private_key)
+      def self.rsa_sign(timestamp, key_id, private_key)
         key = OpenSSL::PKey::RSA.new("-----BEGIN RSA PRIVATE KEY-----\n#{private_key}\n-----END RSA PRIVATE KEY-----")
-        signature = key.sign(OpenSSL::Digest.new('SHA512'), company_id + timestamp)
+        signature = key.sign(OpenSSL::Digest.new('SHA512'), key_id + timestamp)
         Base64.encode64(signature)
       end
 
-      def self.get_token(company_id:, private_key:)
+      def self.get_token(key_id:, private_key:)
         timestamp = DateTime.now.iso8601(3)
-        signature = rsa_sign(timestamp, company_id, private_key)
+        signature = rsa_sign(timestamp, key_id, private_key)
         url = "/public/auth/"
         response = connection.post(url) do |req|
-          req.body = { companyId: company_id, timestamp: timestamp, signature: signature }
+          req.body = { keyId: key_id, timestamp: timestamp, signature: signature }
         end
 
         UI.message("Debug: response #{response.body}") if ENV['DEBUG']
