@@ -14,14 +14,14 @@ module Fastlane
 
       def self.run(params)
         package_name = params[:package_name]
-        company_id = params[:company_id]
+        key_id = params[:key_id]
         private_key = params[:private_key]
         publish_type = params[:publish_type]
         gms_apk = params[:gms_apk]
         hms_apk = params[:hms_apk]
 
         # Получение токена
-        token = Helper::RustoreHelper.get_token(company_id: company_id, private_key: private_key)
+        token = Helper::RustoreHelper.get_token(key_id: key_id, private_key: private_key)
         # Создание черновика
         draft_id = Helper::RustoreHelper.create_draft(token, package_name, publish_type)
         # Загрузка апк
@@ -41,9 +41,9 @@ module Fastlane
                                        env_name: "RUSTORE_PACKAGE_NAME",
                                        description: "пакет приложения, например `com.example.example`",
                                        optional: false),
-          FastlaneCore::ConfigItem.new(key: :company_id,
-                                       env_name: "RUSTORE_COMPANY_ID",
-                                       description: "айдишник компании в русторе",
+          FastlaneCore::ConfigItem.new(key: :key_id,
+                                       env_name: "RUSTORE_KEY_ID",
+                                       description: "идентификатор приватного ключа в русторе",
                                        optional: false),
           FastlaneCore::ConfigItem.new(key: :private_key,
                                        env_name: "RUSTORE_PRIVATE_KEY",
