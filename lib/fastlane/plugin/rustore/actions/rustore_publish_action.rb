@@ -26,13 +26,11 @@ module Fastlane
         # Создание черновика
         draft_id = Helper::RustoreHelper.create_draft(token, package_name, publish_type)
         # Загрузка aab
-        unless aab.nil?
+        if aab
         Helper::RustoreHelper.upload_app(token, draft_id, false, gms_apk, package_name, true)
-        end
-        # Загрузка апк
-        unless gms_apk.nil?
+        # Если нет aab, то загружаем апк
+        else gms_apk
         Helper::RustoreHelper.upload_app(token, draft_id, false, gms_apk, package_name, false)
-        end
         # Если путь до хмс передали, то и его заливаем
         unless hms_apk.nil?
           Helper::RustoreHelper.upload_app(token, draft_id, true, hms_apk, package_name, false)
