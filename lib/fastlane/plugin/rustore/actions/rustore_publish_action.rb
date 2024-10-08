@@ -17,6 +17,7 @@ module Fastlane
         key_id = params[:key_id]
         private_key = params[:private_key]
         publish_type = params[:publish_type]
+        changelog_path = params[:changelog_path]
         aab = params[:aab]
         gms_apk = params[:gms_apk]
         hms_apk = params[:hms_apk]
@@ -24,7 +25,7 @@ module Fastlane
         # Получение токена
         token = Helper::RustoreHelper.get_token(key_id: key_id, private_key: private_key)
         # Создание черновика
-        draft_id = Helper::RustoreHelper.create_draft(token, package_name, publish_type)
+        draft_id = Helper::RustoreHelper.create_draft(token, package_name, publish_type, changelog_path)
         # Загрузка aab
         if aab
         Helper::RustoreHelper.upload_app(token, draft_id, false, gms_apk, package_name, true)
@@ -69,6 +70,10 @@ module Fastlane
           FastlaneCore::ConfigItem.new(key: :hms_apk,
                                        env_name: "RUSTORE_HMS_APK",
                                        description: "путь до апк с хуавейсервисами (опционально)",
+                                       optional: true)
+          FastlaneCore::ConfigItem.new(key: :changelog_path,
+                                       env_name: "RUSTORE_CHANGELOG_PATH",
+                                       description: "путь до файла .txt с описанием Что нового?",
                                        optional: true)
         ]
       end

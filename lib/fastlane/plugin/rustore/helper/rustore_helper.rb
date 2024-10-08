@@ -48,12 +48,25 @@ module Fastlane
         response.body["body"]["jwe"]
       end
 
-      def self.create_draft(token, package_name, publish_type)
+      def self.create_draft(token, package_name, publish_type, changelog_path)
+
+        changelog = ''
+        if changelog_path != nil
+          changelog_data = File.read(changelog_path)
+          if  changelog_data.length > 500
+            UI.user_error!("Файл 'Что нового?' содержит более 500 символов")
+            return
+          else
+            changelog = changelog_data
+          end
+        end
+
         url = "/public/v1/application/#{package_name}/version"
         response = connection.post(url) do |req|
           req.headers['Public-Token'] = token
           req.body = {}
           req.body['publishType'] = publish_type unless publish_type.nil?
+          req.body['whatsNew'] = changelog unless changelog_path.nil?
         end
 
         UI.message("Debug: response #{response.body}") if ENV['DEBUG']

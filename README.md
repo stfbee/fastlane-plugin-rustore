@@ -20,20 +20,24 @@ fastlane add_plugin rustore
 
 ```
     rustore_publish(
+        aab: "../../app-release.aab",
         gms_apk: "../../app-release.apk",
         hms_apk: "../../app-release-hms.apk",
         package_name: "com.example.example",
         publish_type: "MANUAL"
         key_id: "123123",
-        private_key: "MIIE....."
+        private_key: "MIIE.....",
+        changelog_path: "./metadata/android/ru-RU/changelogs/default.txt"
     )
 ```
 
+- `aab` - путь до .aab (если указан, то вместо gms_apk и hms_apk будет загружен только aab)
 - `gms_apk` - путь до .apk, который лучше скачать с гугл плея, у фастлейна даже есть для этого [инструмент](https://docs.fastlane.tools/actions/download_from_play_store/)
-- `hms_apk` - путь до .apk с Huawei-сервисами (опционально). У Рустора пока все плохо с документацией об этом, но залить его можно, что получится - пока хз.
+- `hms_apk` - путь до .apk с Huawei-сервисами (опционально). У Рустора пока все плохо с документацией об этом, но залить его можно, что получится - пока хз
 - `package_name` - название пакета
-- `publish_type` - тип публикации (MANUAL - ручная, DELAYED - отложенная, INSTANTLY - автоматическая после модерации). По умолчанию - INSTANTLY.
-- `key_id` и `private_key` надо взять в админке рустора, доступ к ним имеет только оунер.
+- `publish_type` - тип публикации (MANUAL - ручная, DELAYED - отложенная, INSTANTLY - автоматическая после модерации). По умолчанию - INSTANTLY
+- `key_id` и `private_key` надо взять в админке рустора, доступ к ним имеет только оунер
+- `changelog_path` - путь до текстового файла с текстом Что нового? (должен быть не более 500 символов)
 
 ## Ссылочки
 
