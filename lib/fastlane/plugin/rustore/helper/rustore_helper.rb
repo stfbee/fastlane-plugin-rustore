@@ -48,12 +48,25 @@ module Fastlane
         response.body["body"]["jwe"]
       end
 
-      def self.create_draft(token, package_name, publish_type)
+      def self.create_draft(token, package_name, publish_type, changelog_path)
+
+        changelog = ''
+        if changelog_path != nil
+          changelog_data = File.read(changelog_path)
+          if  changelog_data.length > 500
+            UI.user_error!("Файл 'Что нового?' содержит более 500 символов")
+            return
+          else
+            changelog = changelog_data
+          end
+        end
+
         url = "/public/v1/application/#{package_name}/version"
         response = connection.post(url) do |req|
           req.headers['Public-Token'] = token
           req.body = {}
           req.body['publishType'] = publish_type unless publish_type.nil?
+          req.body['whatsNew'] = changelog unless changelog_path.nil?
         end
 
         UI.message("Debug: response #{response.body}") if ENV['DEBUG']
@@ -69,7 +82,8 @@ module Fastlane
         end
       end
 
-      def self.upload_apk(token, draft_id, is_hms, file_path, package_name)
+      def self.upload_app(token, draft_id, is_hms, file_path, package_name, is_aab)
+        if !is_aab
         if is_hms
           apk_type = "HMS"
           is_main = false
@@ -77,15 +91,16 @@ module Fastlane
           apk_type = "Unknown"
           is_main = true
         end
-
-        url = "/public/v1/application/#{package_name}/version/#{draft_id}/apk"
+        urlEnd = is_aab ? "aab" : "apk"
+        mime = is_aab ? "application/x-authorware-bin" : "application/vnd.android.package-archive"
+        url = "/public/v1/application/#{package_name}/version/#{draft_id}/#{urlEnd}"
         payload = {}
-        payload[:file] = Faraday::Multipart::FilePart.new(file_path, 'application/vnd.android.package-archive')
+        payload[:file] = Faraday::Multipart::FilePart.new(file_path, mime)
 
         response = connection.post(url) do |req|
           req.headers['Public-Token'] = token
-          req.params['servicesType'] = apk_type
-          req.params['isMainApk'] = is_main
+          req.params['servicesType'] = apk_type unless apk_type.nil?
+          req.params['isMainApk'] = is_main unless is_main.nil?
           req.body = payload
         end
 
