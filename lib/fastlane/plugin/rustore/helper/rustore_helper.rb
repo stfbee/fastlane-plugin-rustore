@@ -81,18 +81,16 @@ module Fastlane
           raise "Couldn't get draftId from RuStore"
         end
       end
-
+      
       def self.upload_app(token, draft_id, is_hms, file_path, package_name, is_aab)
+        urlEnd = "aab" 
+        mime = "application/x-authorware-bin" 
         if !is_aab
-        if is_hms
-          apk_type = "HMS"
-          is_main = false
-        else
+          urlEnd = "apk"
+          mime = "application/vnd.android.package-archive"
           apk_type = "Unknown"
           is_main = true
         end
-        urlEnd = is_aab ? "aab" : "apk"
-        mime = is_aab ? "application/x-authorware-bin" : "application/vnd.android.package-archive"
         url = "/public/v1/application/#{package_name}/version/#{draft_id}/#{urlEnd}"
         payload = {}
         payload[:file] = Faraday::Multipart::FilePart.new(file_path, mime)
