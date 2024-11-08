@@ -19,19 +19,18 @@ fastlane add_plugin rustore
 После чего в каком-нибудь лейне дергай экшен плагина:
 
 ```
-    rustore_publish(
+    rustore(
         aab: "../../app-release.aab",
         gms_apk: "../../app-release.apk",
-        hms_apk: "../../app-release-hms.apk",
         package_name: "com.example.example",
-        publish_type: "MANUAL"
+        publish_type: "MANUAL",
         key_id: "123123",
         private_key: "MIIE.....",
         changelog_path: "./metadata/android/ru-RU/changelogs/default.txt"
     )
 ```
 
-- `aab` - путь до .aab (если указан, то вместо gms_apk и hms_apk будет загружен только aab)
+- `aab` - путь до .aab (если указан, то вместо gms_apk будет загружен только aab)
 - `gms_apk` - путь до .apk, который лучше скачать с гугл плея, у фастлейна даже есть для этого [инструмент](https://docs.fastlane.tools/actions/download_from_play_store/)
 - `hms_apk` - путь до .apk с Huawei-сервисами (опционально). У Рустора пока все плохо с документацией об этом, но залить его можно, что получится - пока хз
 - `package_name` - название пакета

@@ -24,7 +24,6 @@ Gem::Specification.new do |spec|
   # spec.add_dependency 'your-dependency', '~> 1.0.0'
 
   spec.add_development_dependency('bundler')
-  spec.add_development_dependency('fastlane', '>= 2.214.0')
   spec.add_development_dependency('pry')
   spec.add_development_dependency('rake')
   spec.add_development_dependency('rspec')
@@ -33,4 +32,6 @@ Gem::Specification.new do |spec|
   spec.add_development_dependency('rubocop-performance')
   spec.add_development_dependency('rubocop-require_tools')
   spec.add_development_dependency('simplecov')
+  spec.add_development_dependency('fastlane', '>= 2.137.0')
+
 end

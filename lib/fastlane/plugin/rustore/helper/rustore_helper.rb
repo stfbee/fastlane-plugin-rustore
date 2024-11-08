@@ -3,7 +3,7 @@ require 'digest'
 require 'json'
 
 module Fastlane
-  UI = FastlaneCore::UI unless Fastlane.const_defined?("UI")
+  UI = FastlaneCore::UI unless Fastlane.const_defined?(:UI)
 
   module Helper
     class RustoreHelper
@@ -49,11 +49,10 @@ module Fastlane
       end
 
       def self.create_draft(token, package_name, publish_type, changelog_path)
-
         changelog = ''
-        if changelog_path != nil
+        unless changelog_path.nil?
           changelog_data = File.read(changelog_path)
-          if  changelog_data.length > 500
+          if changelog_data.length > 500
             UI.user_error!("Файл 'Что нового?' содержит более 500 символов")
             return
           else
@@ -73,25 +72,27 @@ module Fastlane
         if response.body["body"]
           # Если черновика не было, и мы создали новый, здесь будет draftId
           return response.body["body"]
-        elsif response.body["message"]
+        elsif response.body["message"] # when received response.body["code"]: "ERROR"
           # Если черновик уже существовал, в message будет ошибка вида
           # "You already have draft version with ID = XXXXXXXXXX", откуда достаем ID существующего черновика.
-          return response.body["message"].scan(/\d+/).first.to_i
+          return response.body["message"].scan(/\d+/).first
         else
           raise "Couldn't get draftId from RuStore"
         end
       end
-      
+
       def self.upload_app(token, draft_id, is_hms, file_path, package_name, is_aab)
-        urlEnd = "aab" 
-        mime = "application/x-authorware-bin" 
-        if !is_aab
+        urlEnd = "aab"
+        mime = "application/x-authorware-bin"
+        unless is_aab
           urlEnd = "apk"
           mime = "application/vnd.android.package-archive"
           apk_type = "Unknown"
           is_main = true
         end
         url = "/public/v1/application/#{package_name}/version/#{draft_id}/#{urlEnd}"
+        puts("url with draftId: #{url}")
+        puts("file_path: #{file_path}")
         payload = {}
         payload[:file] = Faraday::Multipart::FilePart.new(file_path, mime)
 
