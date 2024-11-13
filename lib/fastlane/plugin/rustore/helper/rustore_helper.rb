@@ -16,8 +16,11 @@ module Fastlane
         }
 
         logger = Logger.new($stderr)
-        logger.level = Logger::DEBUG
-
+        if ENV['DEBUG']
+          logger.level = Logger::DEBUG
+        else
+          logger.level = Logger::ERROR
+        end
         Faraday.new(options) do |builder|
           builder.request(:multipart)
           builder.request(:json)
