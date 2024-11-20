@@ -94,8 +94,6 @@ module Fastlane
           is_main = true
         end
         url = "/public/v1/application/#{package_name}/version/#{draft_id}/#{urlEnd}"
-        puts("url with draftId: #{url}")
-        puts("file_path: #{file_path}")
         payload = {}
         payload[:file] = Faraday::Multipart::FilePart.new(file_path, mime)
 
@@ -105,9 +103,11 @@ module Fastlane
           req.params['isMainApk'] = is_main unless is_main.nil?
           req.body = payload
         end
+        error_message = response.body['message'].to_s
 
-        if response.body["message"] == "File was not uploaded successfully: The code of this version must be larger than that of the previous one"
-          raise "Build with this version code was already uploaded earlier"
+        hasError = response.body["code"] == "ERROR"
+        if hasError
+          raise "Could not upload file #{file_path} to #{url}: #{error_message}"
         end
 
         UI.message("Debug: response #{response.body}") if ENV['DEBUG']
