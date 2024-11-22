@@ -25,13 +25,19 @@ module Fastlane
         token = Helper::RustoreHelper.get_token(key_id: key_id, private_key: private_key)
         # Создание черновика
         draft_id = Helper::RustoreHelper.create_draft(token, package_name, publish_type, changelog_path)
+        if aab.nil? && gms_apk.nil?
+          raise "The aab or gms_apk parameter is not specified"
+        end
+
         # Загрузка aab
         if aab
           Helper::RustoreHelper.upload_app(token, draft_id, false, aab, package_name, true)
-          # Если нет aab, то загружаем апк
-        else gms_apk
+        end
+        # Если нет aab, то загружаем апк
+        if gms_apk && aab.nil?
           Helper::RustoreHelper.upload_app(token, draft_id, false, gms_apk, package_name, false)
         end
+        sleep(30)
         # Отправка на модерацию
         Helper::RustoreHelper.commit_version(token, draft_id, package_name)
       end
