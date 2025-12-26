@@ -3,7 +3,7 @@ require "fastlane_core/ui/ui"
 
 module Fastlane
   module Actions
-    class RustorePublishAction < Action
+    class RustoreAction < Action
       def self.authors
         ["Vladislav Onishchenko"]
       end
@@ -20,25 +20,26 @@ module Fastlane
         changelog_path = params[:changelog_path]
         aab = params[:aab]
         gms_apk = params[:gms_apk]
-        hms_apk = params[:hms_apk]
 
         # Получение токена
         token = Helper::RustoreHelper.get_token(key_id: key_id, private_key: private_key)
         # Создание черновика
         draft_id = Helper::RustoreHelper.create_draft(token, package_name, publish_type, changelog_path)
+        if aab.nil? && gms_apk.nil?
+          raise "The aab or gms_apk parameter is not specified"
+        end
+
         # Загрузка aab
         if aab
-        Helper::RustoreHelper.upload_app(token, draft_id, false, gms_apk, package_name, true)
-        # Если нет aab, то загружаем апк
-        else gms_apk
-        Helper::RustoreHelper.upload_app(token, draft_id, false, gms_apk, package_name, false)
-        # Если путь до хмс передали, то и его заливаем
-        unless hms_apk.nil?
-          Helper::RustoreHelper.upload_app(token, draft_id, true, hms_apk, package_name, false)
+          Helper::RustoreHelper.upload_app(token, draft_id, false, aab, package_name, true)
         end
+        # Если нет aab, то загружаем апк
+        if gms_apk && aab.nil?
+          Helper::RustoreHelper.upload_app(token, draft_id, false, gms_apk, package_name, false)
+        end
+        sleep(30)
         # Отправка на модерацию
         Helper::RustoreHelper.commit_version(token, draft_id, package_name)
-
       end
 
       def self.available_options
@@ -67,10 +68,6 @@ module Fastlane
                                        env_name: "RUSTORE_GMS_APK",
                                        description: "путь до апк с гуглсервисами",
                                        optional: true),
-          FastlaneCore::ConfigItem.new(key: :hms_apk,
-                                       env_name: "RUSTORE_HMS_APK",
-                                       description: "путь до апк с хуавейсервисами (опционально)",
-                                       optional: true)
           FastlaneCore::ConfigItem.new(key: :changelog_path,
                                        env_name: "RUSTORE_CHANGELOG_PATH",
                                        description: "путь до файла .txt с описанием Что нового?",

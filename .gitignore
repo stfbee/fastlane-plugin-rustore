@@ -10,7 +10,7 @@ cmake-build-*/
 *.iws
 out/
 .idea_modules/
-
+run_spec.sh
 ### Ruby template
 *.gem
 *.rbc
